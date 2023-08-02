@@ -155,9 +155,8 @@ def body():
                                     html.Br(),
                                     html.Label(children=[dbc.Button("Change stock trajectory", id="ButtonChangeStockTrajectory", color="primary", class_name="mr-1")],
                                      title=list_input["Seed"]),
-
                                     html.Br(),
-                                    html.Div(children=[html.Label("The current stock trajectory scenario is: ", style={'display': 'inline-block', "padding":5}),
+                                    html.Div(children=[html.Label("You can input a specific seed: ", style={'display': 'inline-block', "padding":5}),
                                              dcc.Input(id='seed', readOnly=False, debounce=True, value=1, min=1,max=500000, type='number',  style={"width":"20%", 'display': 'inline-block'})
                                              ]      #stockScenario
                                     ),
