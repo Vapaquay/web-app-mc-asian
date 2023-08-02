@@ -70,14 +70,6 @@ def get_simu(ModelSel,ModelSel2,CallOrPut,S,K,mu,vol,T,TS,M,MC,seed,n_clicks):
 
     return (Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2), seed
 
-
-
-"""@app.callback(Output('seed', 'value'),
-              [Input('memory-output', 'data')])
-def display_value_mu(data):
-    Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2 = data
-    return seed"""
-
 ## PLOT
 #Boxplot 
 @app.callback( 
