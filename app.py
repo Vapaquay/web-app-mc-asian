@@ -33,7 +33,8 @@ app.layout = html.Div(
                      )
 
 @app.callback(
-    Output('memory-output', 'data'),
+    [Output('memory-output', 'data'),
+     Output('seed','value')],
     [Input('ModelSel', 'value'),
      Input('ModelSel2','value'),
      Input('CallOrPut', 'value'),
@@ -49,7 +50,6 @@ app.layout = html.Div(
      Input('ButtonChangeStockTrajectory', 'n_clicks'),
      ])
 def get_simu(ModelSel,ModelSel2,CallOrPut,S,K,mu,vol,T,TS,M,MC,seed,n_clicks):
-    print(seed)
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'ButtonChangeStockTrajectory' in changed_id:
         seed=["RandomSeed"]
@@ -68,16 +68,15 @@ def get_simu(ModelSel,ModelSel2,CallOrPut,S,K,mu,vol,T,TS,M,MC,seed,n_clicks):
         PriceVec1.append(temp[0])
         PriceVec2.append(temp[1])
 
-    return Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2
+    return (Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2), seed
 
 
 
-@app.callback(Output('seed', 'value'),
+"""@app.callback(Output('seed', 'value'),
               [Input('memory-output', 'data')])
 def display_value_mu(data):
     Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2 = data
-    print(seed)
-    return seed
+    return seed"""
 
 ## PLOT
 #Boxplot 
