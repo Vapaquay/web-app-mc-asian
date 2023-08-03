@@ -380,17 +380,17 @@ def Model_provider(S0,K,T,r,vol,N,M,Type,seed, ModelSel, ModelSel2):
         Price, SE, seed = MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed)
 
     if ModelSel2 == "Classical MC":
-        Price2, SE2, seed2 = MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed)
+        Price2, SE2, seed2 = MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed*2)
     elif ModelSel2 == "McAnti":
-        Price2, SE2, seed2 = MC_SimAnti(S0,K,T,r,vol,N,M,Type,seed)
+        Price2, SE2, seed2 = MC_SimAnti(S0,K,T,r,vol,N,M,Type,seed*2)
     elif ModelSel2 == "McEuro":
-        Price2, SE2, seed2 = MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed)
+        Price2, SE2, seed2 = MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed*2)
     elif ModelSel2 == "McEuroAnti":
-        Price2, SE2, seed2 = MC_Sim_CV_EUR_ANTI(S0,K,T,r,vol,N,M,Type,seed)
+        Price2, SE2, seed2 = MC_Sim_CV_EUR_ANTI(S0,K,T,r,vol,N,M,Type,seed*2)
     elif ModelSel2 == "McSumEuro":
-        Price2, SE2, seed2 = MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed)
+        Price2, SE2, seed2 = MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed*2)
     elif ModelSel2 == "McGeo":
-        Price2, SE2, seed2 = MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed)
+        Price2, SE2, seed2 = MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed*2)
 
     return Price, Price2, SE, SE2, seed, seed2    
 

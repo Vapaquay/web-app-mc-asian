@@ -69,7 +69,7 @@ def get_simu(ModelSel,ModelSel2,CallOrPut,S,K,mu,vol,T,TS,M,MC,seed,n_clicks):
     #run the MC simulation multiple times to get a vector of estimated option prices
     for i in range (0,MC):
         print(i)    
-        temp = Model_provider(S,K,T,mu,vol,TS,M,CallOrPut,seed+i, ModelSel, ModelSel2)
+        temp = Model_provider(S,K,T,mu,vol,TS,M,CallOrPut,seed+i, ModelSel, ModelSel2) #seed+i to move the seed for each MC
         PriceVec1.append(temp[0])
         PriceVec2.append(temp[1])
 
@@ -163,8 +163,9 @@ def check_input_K(K):
 @app.callback(Output('message_TS', 'children'),
               [Input('T', 'value'),
               Input("TS", "value")])
-def check_input_dt(TS, T):
-    if TS>506:
+def check_input_dt(T, TS):
+    print(TS, T)
+    if TS>506:  
         return f'Higher than 506 time steps will make the app run slowly'
     elif TS < T:
         return f"Cannot be lower than {T}"
