@@ -41,7 +41,7 @@ def MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed):
     #Seed management
     b = seed
     if type(b) is list:
-        b=b[0]
+        b=b[0]  
     else:
         np.random.seed(b)
 
@@ -62,7 +62,8 @@ def MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed):
     for i in range(N):
         nudt[i,:] = (r - 0.5*vol**2)*dt[i]
         volsdt[i,:] = vol*np.sqrt(dt[i])
-    # Monte Carlo Method
+    ####### Monte Carlo Method
+    #We generate a matrix N*M of r.v. following the Normal(0,1) and we generate all the stock paths
     Z = np.random.normal(size=(N, M)) 
     delta_St1 = nudt + volsdt*Z
     ST1 = S0*np.cumprod( np.exp(delta_St1), axis=0)
@@ -75,11 +76,12 @@ def MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed):
     Price = np.exp(-r*T)*Payoff
     AvgPrice = np.mean(Price)
     SEavg = np.std(Price)/np.sqrt(M)
-    print("Call value is ${0} with SE +/- {1}".format(np.round(AvgPrice,3),np.round(SEavg,4)))
+    #print("Call value is ${0} with SE +/- {1}".format(np.round(AvgPrice,3),np.round(SEavg,4)))
     return AvgPrice, SEavg, b #Return price, SE and stock paths  ST1[:,1]
 
 #### Monte Carlo simulation with antithetic variate ####
 def MC_SimAnti(S0,K,T,r,vol,N,M,Type,seed): 
+    #seed management
     b = seed
     if type(b) is list:
         b=b[0]
@@ -92,9 +94,11 @@ def MC_SimAnti(S0,K,T,r,vol,N,M,Type,seed):
         b = np.random.randint(low=1, high=500000)
         np.random.seed(b)
 
+    #Compute time steps
     TS = np.linspace(0,T,N+1)
     dt = np.diff(TS)
 
+    #Generate matrix for precomputed constants
     nudt = np.full(shape=(N,M), fill_value=0.0)
     volsdt = np.full(shape=(N,M), fill_value=0.0)
     # Precompute constants
@@ -105,23 +109,24 @@ def MC_SimAnti(S0,K,T,r,vol,N,M,Type,seed):
     Z = np.random.normal(size=(N, M)) 
     delta_St1 = nudt + volsdt*Z
     delta_St2 = nudt - volsdt*Z #computing the antithetic variable
-    ST1 = S0*np.cumprod( np.exp(delta_St1), axis=0)
-    ST2 = S0*np.cumprod( np.exp(delta_St2), axis=0)
-    AT1 = np.cumsum(ST1, axis=0)/N
-    AT2 = np.cumsum(ST2, axis=0)/N
+    ST1 = S0*np.cumprod( np.exp(delta_St1), axis=0) #first path
+    ST2 = S0*np.cumprod( np.exp(delta_St2), axis=0) #second path
+    AT1 = np.cumsum(ST1, axis=0)/N #first payoff
+    AT2 = np.cumsum(ST2, axis=0)/N #second payoff
 
     if Type == "Call":
-        Payoff = 0.5 * ( np.maximum(0, AT1[-1] - K) + np.maximum(0, AT2[-1] - K) )
+        Payoff = 0.5 * ( np.maximum(0, AT1[-1] - K) + np.maximum(0, AT2[-1] - K) ) #average of both payoff (see antithetic variate in theory)
     else:
         Payoff = 0.5 * ( np.maximum(0, K - AT1[-1]) + np.maximum(0, K - AT2[-1]) )
     Price = np.exp(-r*T)*Payoff
     AvgPrice = np.mean(Price)
     SE = np.std(Price)/np.sqrt(M)
-    print("Call value with antithetic variate is ${0} with SE +/- {1}".format(np.round(AvgPrice,3),np.round(SE,4)))
+    #print("Call value with antithetic variate is ${0} with SE +/- {1}".format(np.round(AvgPrice,3),np.round(SE,4)))
     return AvgPrice, SE, b
 
 #### MC with european option as control variate ####
 def MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed): 
+    #seed management
     b = seed
     if type(b) is list:
         b=b[0]
@@ -134,6 +139,7 @@ def MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed):
         b = np.random.randint(low=1, high=500000)
         np.random.seed(b)
     
+    #computing time steps
     TS = np.linspace(0,T,N+1)
     dt = np.diff(TS)
 
@@ -149,10 +155,10 @@ def MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed):
     delta_St = nudt + volsdt*Z
     ST = S0*np.cumprod( np.exp(delta_St), axis=0)
 
-    #Computing asian price
-    AT = np.cumsum(ST, axis=0)/N #[N*M]
+    #Computing asian price vector
+    AT = np.cumsum(ST, axis=0)/N #[N*M] for the payoff
     if Type == "Call":
-        PayoffAsian = np.maximum(0, AT[-1] - K) #[1*M]
+        PayoffAsian = np.maximum(0, AT[-1] - K) #[1*M] 
     else:
         PayoffAsian = np.maximum(0, K - AT[-1]) #[1*M]
     AsianPrice = np.exp(-r*T)*PayoffAsian #Computing price vector for asian 
@@ -172,7 +178,7 @@ def MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed):
     Price=AsianPrice - alpha*(EuroPrice - BSprice)
     SEavg = np.std(Price)/np.sqrt(M)
     AvgPrice = np.mean(Price)
-    print("Call value with control variate is ${0} with SE +/- {1}".format(np.round(np.mean(Price),3),np.round(SEavg,4)))
+    #print("Call value with control variate is ${0} with SE +/- {1}".format(np.round(np.mean(Price),3),np.round(SEavg,4)))
     return AvgPrice, SEavg, b
 
 #### MC with european option as control variate AND antithetic variate####
@@ -201,10 +207,10 @@ def MC_Sim_CV_EUR_ANTI(S0,K,T,r,vol,N,M,Type,seed):
     BSprice = BS_eur(S0,K,T,vol,r,Type) #Black-Scholes price
     # Monte Carlo Method 
     Z = np.random.normal(size=(N, M)) 
-    delta_St = nudt + volsdt*Z
-    delta_St2 = nudt - volsdt*Z
-    ST = S0*np.cumprod( np.exp(delta_St), axis=0)
-    ST_anti = S0*np.cumprod( np.exp(delta_St2), axis=0)
+    delta_St = nudt + volsdt*Z 
+    delta_St2 = nudt - volsdt*Z 
+    ST = S0*np.cumprod( np.exp(delta_St), axis=0) #first stock path
+    ST_anti = S0*np.cumprod( np.exp(delta_St2), axis=0) #antithetic path
 
     #Computing asian price
     AT = np.cumsum(ST, axis=0)/N #[N*M]
@@ -230,7 +236,7 @@ def MC_Sim_CV_EUR_ANTI(S0,K,T,r,vol,N,M,Type,seed):
     Price=AsianPrice - alpha*(EuroPrice - BSprice)
     SEavg = np.std(Price)/np.sqrt(M)
     AvgPrice = np.mean(Price)
-    print("Call value with control variate is ${0} with SE +/- {1}".format(np.round(np.mean(Price),3),np.round(SEavg,4)))
+    #print("Call value with control variate is ${0} with SE +/- {1}".format(np.round(np.mean(Price),3),np.round(SEavg,4)))
     return AvgPrice, SEavg, b
 
 #### MC with averaged sum of european option as control variate####
@@ -252,7 +258,8 @@ def MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed):
 
     nudt = np.full(shape=(N,M), fill_value=0.0)
     volsdt = np.full(shape=(N,M), fill_value=0.0)
-    ActrateMatrix = np.full(shape=(N,M), fill_value=0.0)
+    #to get the option price for each time t, we need to discount it by e^{-rt_j} 
+    ActrateMatrix = np.full(shape=(N,M), fill_value=0.0) 
     actrate = np.exp(-r*T)
     # Precompute constants
     for i in range(N):
@@ -288,13 +295,12 @@ def MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed):
     #Estimating alpha
     cov = np.cov(AsianPrice,SumEuroPrice)
     alpha = cov[0,1]/cov[1,1]
-    print(alpha)
 
     Price = AsianPrice - alpha*(SumEuroPrice - AvgBS)
     SEavg = np.std(Price)/np.sqrt(M)
     AvgPrice = np.mean(Price)
 
-    print("Price: {0}, SE: {1}".format(AvgPrice, SEavg))
+    #print("Price: {0}, SE: {1}".format(AvgPrice, SEavg))
     return AvgPrice, SEavg, b
 
 #### MC with geometric asian option as control variate####
@@ -353,8 +359,11 @@ def MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed):
     AvgPrice = np.mean(AsianPriceVec)
     SEavg = np.std(AsianPriceVec)/np.sqrt(M)
 
-    print("Price: {0}, SE: {1}".format(np.round(AvgPrice,4), np.round(SEavg,5)))
+    #print("Price: {0}, SE: {1}".format(np.round(AvgPrice,4), np.round(SEavg,5)))
     return AvgPrice, SEavg, b
+
+#Because we need to get multiples times the MC simulation to get a vector of option prices, we need to call the definition multiples times
+#This function call the right function depending of the model selected 
 
 def Model_provider(S0,K,T,r,vol,N,M,Type,seed, ModelSel, ModelSel2):
     if ModelSel == "Classical MC":
@@ -385,11 +394,3 @@ def Model_provider(S0,K,T,r,vol,N,M,Type,seed, ModelSel, ModelSel2):
 
     return Price, Price2, SE, SE2, seed, seed2    
 
-
-
-#MC_AsianClass(S0,K,T,r,vol,N,M,Type,1)
-"""MC_SimAnti(S0,K,T,r,vol,N,M,Type)
-MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type)
-MC_Sim_CV_EUR_ANTI(S0,K,T,r,vol,N,M,Type)
-MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type)
-MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type)"""

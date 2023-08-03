@@ -1,5 +1,9 @@
 ####################################################################
 ################## LIBRARIES IMPORT ################################
+
+#Note: this code has been taken from Michel Vanderhulst's thesis code to ensure the consistency of the app if another student want
+#implement new features. Small changes have been done to adapt the code for the purpose of this thesis. 
+
 ## APP-RELATED LIBRARIES
 import dash
 import dash_core_components as dcc
@@ -50,18 +54,19 @@ app.layout = html.Div(
      Input('ButtonChangeStockTrajectory', 'n_clicks'),
      ])
 def get_simu(ModelSel,ModelSel2,CallOrPut,S,K,mu,vol,T,TS,M,MC,seed,n_clicks):
-    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
-    if 'ButtonChangeStockTrajectory' in changed_id:
-        seed=["RandomSeed"]
+    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0] #Detect the input that triggered the callback and place it in change_id
+    #detect if the user push on the button
+    if 'ButtonChangeStockTrajectory' in changed_id: 
+        seed=["RandomSeed"] 
     else:
         seed = seed if type(seed)==int else 5
 
-
+    #first run of simulation to display price, SE and confidence interval
     Price,Price2,SE,SE2,seed,seed2 = Model_provider(S,K,T,mu,vol,TS,M,CallOrPut,seed, ModelSel, ModelSel2)
-    print('A')
     PriceVec1 = []
     PriceVec2 = []
     
+    #run the MC simulation multiple times to get a vector of estimated option prices
     for i in range (0,MC):
         print(i)    
         temp = Model_provider(S,K,T,mu,vol,TS,M,CallOrPut,seed+i, ModelSel, ModelSel2)
@@ -138,7 +143,7 @@ def graph_density(data):
     return figure
 
    
-## DOUBLE-CHECKING USER INPUT
+## DOUBLE-CHECKING USER INPUT 
 @app.callback(Output('message_S', 'children'),
               [Input('S', 'value')])
 def check_input_S(S):
@@ -158,9 +163,9 @@ def check_input_K(K):
 @app.callback(Output('message_TS', 'children'),
               [Input('T', 'value'),
               Input("TS", "value")])
-def check_input_dt(TS, dt):
+def check_input_dt(TS, T):
     if TS>506:
-        return f'Higher than 252 time steps will make the app run slowly'
+        return f'Higher than 506 time steps will make the app run slowly'
     elif TS < T:
         return f"Cannot be lower than {T}"
     else:
