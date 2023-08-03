@@ -1,15 +1,18 @@
+#This code give multiple functions to compute different options prices by using different model
+#The objective is to use it for an App to show how to price an arithmetic Asian option using MC
+#SOURCES:
+#MC using vectorization is inspired from https://quantpy.com.au/
+#Theoretical equations come from: 
+#Slides from Pr. Vrins in LLSMS2225 at the Louvain School Of Management
+#Monte Carlo in Financial Engineering from Paul Glasserman, editor: Springer
+
+#The way the seed is managed follows the metholodogy of the V1 app developed by Michel Vanderhulst
+
+#Import packages
 import numpy as np
 from scipy.stats import norm
 import matplotlib.pyplot as plot
 
-S0 = 100
-K = 105 
-vol = 0.2
-r = 0.05
-T = 1
-N = 10
-M = 2
-Type = "Call"
 
 #### Closed form equation for european option ####
 def BS_eur(S0, K, T, vol, r, type):
@@ -22,8 +25,8 @@ def BS_eur(S0, K, T, vol, r, type):
     return price
 
 #### Closed form equation for geometric asian option ####
-def BS_geo(S0,K,T,vol,r,n,type):
-    varbis = vol**2 * (((n+1)*(2*n+1))/(6*(n**2)))
+def BS_geo(S0,K,T,vol,r,n,type): 
+    varbis = vol**2 * (((n+1)*(2*n+1))/(6*(n**2))) #We need to compute another the specific volatility and risk-free rate for the geometric asian option
     rbis = (varbis/2) + (r-((vol**2)/2)) * ((n+1)/(2*n))
     d1 = (np.log(S0/K) + (rbis+0.5*varbis)*T) / np.sqrt(varbis)*np.sqrt(T)
     d2 = d1 - (np.sqrt(varbis)*np.sqrt(T))
@@ -35,6 +38,7 @@ def BS_geo(S0,K,T,vol,r,n,type):
 
 #### Classical Monte Carlo simulation ####
 def MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed):
+    #Seed management
     b = seed
     if type(b) is list:
         b=b[0]
@@ -47,9 +51,11 @@ def MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed):
         b = np.random.randint(low=1, high=500000)
         np.random.seed(b)
 
+    #Computing time steps
     TS = np.linspace(0,T,N+1)
     dt = np.diff(TS)
 
+    #Vectors for precomputed constants
     nudt = np.full(shape=(N,M), fill_value=0.0)
     volsdt = np.full(shape=(N,M), fill_value=0.0)
     # Precompute constants
