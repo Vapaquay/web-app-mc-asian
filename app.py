@@ -89,9 +89,10 @@ def boxplot(data):
                 go.Box(y=PriceVec2, name=ModelSel2)
             ],
             'layout': go.Layout(
-                title='Boxplot of prices per model',
+                title='Prices boxplot',
                 xaxis=dict(title='Model'),
-                yaxis=dict(title='Price')
+                yaxis=dict(title='Price'),
+                showlegend=False
             )
         }   
     return figure
