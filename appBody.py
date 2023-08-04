@@ -142,7 +142,7 @@ def body():
                                     ),  
                                     ####### Number of simulations
                                     html.Div(children=[html.Label('Number of simulations', title=list_input["Number of simulations"], style={'font-weight': 'bold', "text-align":"left", "width":"25%",'display': 'inline-block'} ),
-                                               dcc.Input(id="M", value=1000, debounce=True, type='number', style={"width":"20%", 'display': 'inline-block'},min=1,max=100001),
+                                               dcc.Input(id="M", value=1000, debounce=True, type='number', style={"width":"20%", 'display': 'inline-block'},min=1,max=1000001),
                                                html.P("",id="message_M", style={"font-size":12, "color":"red", "padding":5, 'width': '55%', "text-align":"left", 'display': 'inline-block'})
                                               ]
                                     ),

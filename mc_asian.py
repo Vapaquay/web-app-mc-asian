@@ -26,14 +26,13 @@ def BS_eur(S0, K, T, vol, r, type):
 
 #### Closed form equation for geometric asian option ####
 def BS_geo(S0,K,T,vol,r,n,type): 
-    varbis = vol**2 * (((n+1)*(2*n+1))/(6*(n**2))) #We need to compute another the specific volatility and risk-free rate for the geometric asian option
-    rbis = (varbis/2) + (r-((vol**2)/2)) * ((n+1)/(2*n))
-    d1 = (np.log(S0/K) + (rbis+0.5*varbis)*T) / np.sqrt(varbis)*np.sqrt(T)
-    d2 = d1 - (np.sqrt(varbis)*np.sqrt(T))
+    d=  0.5*(r-((vol**2)/6))*T
+    d1 = d1 = (np.log(S0/K) + 0.5*(r+((vol**2)/6))*T / vol*np.sqrt(T/3))
+    d2 = d1- vol*np.sqrt(T/3)
     if type == "Call":
-        price = np.exp(-r*T) * (S0*np.exp(rbis*T)*norm.cdf(d1)-K*norm.cdf(d2))
+        price = S0*np.exp(d) *norm.cdf(d1)-K*norm.cdf(d2)
     else:
-        price = np.exp(-r*T) * (K*norm.cdf(-d2) - S0*np.exp(rbis*T)*norm.cdf(-d1))
+        price = K*norm.cdf(d2) - S0*np.exp(d) *norm.cdf(d1)
     return price
 
 #### Classical Monte Carlo simulation ####
@@ -75,6 +74,7 @@ def MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed):
         Payoff = np.maximum(0, K - AT1[-1]) #reduction to [1*M]
     Price = np.exp(-r*T)*Payoff
     AvgPrice = np.mean(Price)
+    print(AvgPrice)
     SEavg = np.std(Price)/np.sqrt(M)
     #print("Call value is ${0} with SE +/- {1}".format(np.round(AvgPrice,3),np.round(SEavg,4)))
     return AvgPrice, SEavg, b #Return price, SE and stock paths  ST1[:,1]
@@ -355,6 +355,10 @@ def MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed):
     Cov = np.cov(AsianPrice, GeometricPrice)
     alpha = Cov[0,1]/Cov[1,1]
 
+    print("Asian ar: ", np.mean(AsianPrice))
+    print("Asian geo :", np.mean(GeometricPrice))
+    print("BSM: ", np.mean(GeoBSPrice))
+
     AsianPriceVec = (AsianPrice) - alpha*(GeometricPrice - GeoBSPrice)
     AvgPrice = np.mean(AsianPriceVec)
     SEavg = np.std(AsianPriceVec)/np.sqrt(M)
@@ -390,7 +394,7 @@ def Model_provider(S0,K,T,r,vol,N,M,Type,seed, ModelSel, ModelSel2):
     elif ModelSel2 == "MC with sum of european as CV":
         Price2, SE2, seed2 = MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed*2)
     elif ModelSel2 == "MC with geometric as CV":
-        Price2, SE2, seed2 = MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed*2)
+        Price2, SE2, seed2 = MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed)
 
     return Price, Price2, SE, SE2, seed, seed2    
 

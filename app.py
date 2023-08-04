@@ -65,13 +65,14 @@ def get_simu(ModelSel,ModelSel2,CallOrPut,S,K,mu,vol,T,TS,M,MC,seed,n_clicks):
     Price,Price2,SE,SE2,seed,seed2 = Model_provider(S,K,T,mu,vol,TS,M,CallOrPut,seed, ModelSel, ModelSel2)
     PriceVec1 = []
     PriceVec2 = []
+    print("First MC done")
     
     #run the MC simulation multiple times to get a vector of estimated option prices
-    for i in range (0,MC):
-        print(i)    
+    for i in range (0,MC):    
         temp = Model_provider(S,K,T,mu,vol,TS,M,CallOrPut,seed+i, ModelSel, ModelSel2) #seed+i to move the seed for each MC
         PriceVec1.append(temp[0])
         PriceVec2.append(temp[1])
+    print("Vector of prices done")
 
     return (Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2), seed
 
@@ -141,6 +142,7 @@ def graph_density(data):
                 showlegend=False
             )
         }
+    print("All plots done")
     return figure
 
    
@@ -165,7 +167,6 @@ def check_input_K(K):
               [Input('T', 'value'),
               Input("TS", "value")])
 def check_input_dt(T, TS):
-    print(TS, T)
     if TS>506:  
         return f'Higher than 506 time steps will make the app run slowly'
     elif TS < T:
@@ -176,7 +177,7 @@ def check_input_dt(T, TS):
 @app.callback(Output('message_M', 'children'),
               [Input('M', 'value')])
 def check_input_S(M):
-    if M>100000:
+    if M>1000000:
         return f'More than 100000 simulation will make the app run slowly'
     else:
         return ""
