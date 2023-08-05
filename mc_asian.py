@@ -371,31 +371,33 @@ def MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed):
 #This function call the right function depending of the model selected 
 
 def Model_provider(S0,K,T,r,vol,N,M,Type,seed, ModelSel, ModelSel2):
-    if ModelSel == "Classical MC":
-        Price, SE, seed = MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed)
-    elif ModelSel == "MC with antithetic":
-        Price, SE, seed = MC_SimAnti(S0,K,T,r,vol,N,M,Type,seed)
-    elif ModelSel == "MC with european as CV":
-        Price, SE, seed = MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed)
-    elif ModelSel == "MC with antithetic and european as CV":
-        Price, SE, seed = MC_Sim_CV_EUR_ANTI(S0,K,T,r,vol,N,M,Type,seed)
-    elif ModelSel == "MC with sum of european as CV":
-        Price, SE, seed = MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed)
-    elif ModelSel == "MC with geometric as CV":
-        Price, SE, seed = MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed)
+    match ModelSel:
+        case "Classical MC":
+            Price, SE, seed = MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed)
+        case "MC with antithetic":
+            Price, SE, seed = MC_SimAnti(S0,K,T,r,vol,N,M,Type,seed)
+        case "MC with european as CV":
+            Price, SE, seed = MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed)
+        case "MC with antithetic and european as CV":
+            Price, SE, seed = MC_Sim_CV_EUR_ANTI(S0,K,T,r,vol,N,M,Type,seed)
+        case "MC with sum of european as CV":
+            Price, SE, seed = MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed)
+        case "MC with geometric as CV":
+            Price, SE, seed = MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed)
 
-    if ModelSel2 == "Classical MC":
-        Price2, SE2, seed2 = MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed*2) #seed is *2 to have another seed than the first model if the user use the same model
-    elif ModelSel2 == "MC with antithetic":
-        Price2, SE2, seed2 = MC_SimAnti(S0,K,T,r,vol,N,M,Type,seed*2)
-    elif ModelSel2 == "MC with european as CV":
-        Price2, SE2, seed2 = MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed*2)
-    elif ModelSel2 == "MC with antithetic and european as CV":
-        Price2, SE2, seed2 = MC_Sim_CV_EUR_ANTI(S0,K,T,r,vol,N,M,Type,seed*2)
-    elif ModelSel2 == "MC with sum of european as CV":
-        Price2, SE2, seed2 = MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed*2)
-    elif ModelSel2 == "MC with geometric as CV":
-        Price2, SE2, seed2 = MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed)
+    match ModelSel2:
+        case "Classical MC":
+            Price2, SE2, seed2 = MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed*2) #seed is *2 to have another seed than the first model if the user use the same model
+        case "MC with antithetic":
+            Price2, SE2, seed2 = MC_SimAnti(S0,K,T,r,vol,N,M,Type,seed*2)
+        case "MC with european as CV":
+            Price2, SE2, seed2 = MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed*2)
+        case "MC with antithetic and european as CV":
+            Price2, SE2, seed2 = MC_Sim_CV_EUR_ANTI(S0,K,T,r,vol,N,M,Type,seed*2)
+        case "MC with sum of european as CV":
+            Price2, SE2, seed2 = MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed*2)
+        case "MC with geometric as CV":
+            Price2, SE2, seed2 = MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed)
 
     return Price, Price2, SE, SE2, seed, seed2    
 
