@@ -25,14 +25,15 @@ def BS_eur(S0, K, T, vol, r, type):
     return price
 
 #### Closed form equation for geometric asian option ####
-def BS_geo(S0,K,T,vol,r,n,type): 
-    d=  0.5*(r-((vol**2)/6))*T
-    d1 = d1 = (np.log(S0/K) + 0.5*(r+((vol**2)/6))*T / vol*np.sqrt(T/3))
-    d2 = d1- vol*np.sqrt(T/3)
-    if type == "Call":
-        price = S0*np.exp(d) *norm.cdf(d1)-K*norm.cdf(d2)
-    else:
-        price = K*norm.cdf(d2) - S0*np.exp(d) *norm.cdf(d1)
+def BS_geo(S0,K,T,vol,r,n,option_type):
+    sigsqT = vol**2*T*(2*n+1)/(6*n+6)
+    muT = 0.5*sigsqT + 0.5*(r - 0.5*(vol**2))*T
+    d1=(np.log(S0/K) + (muT + 0.5*sigsqT))/(np.sqrt(sigsqT))
+    d2=d1 - np.sqrt(sigsqT)
+    if option_type == "Call":
+        price=np.exp(-r*T)*( S0*np.exp(muT)*norm.cdf(d1)-K*norm.cdf(d2))
+    else: 
+        price = np.exp(-r*T)*(K*norm.cdf(-d2) - S0*np.exp(muT)*norm.cdf(-d1))
     return price
 
 #### Classical Monte Carlo simulation ####
