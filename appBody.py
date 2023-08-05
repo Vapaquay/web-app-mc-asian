@@ -17,10 +17,26 @@ def body():
                                 label='About this app',
                                 value='About this app',
                                 children=html.Div(children=[
-                                    #html.Br(
+                                   html.Br(),
                                     html.H4('What is this app?', style={"text-align":"center"}),
-                                    html.P("Insérer l'explication de l'app avec les différents modèles")
-                                    #)
+                                    html.P(
+                                        """
+                                        This app computes the price of an arithmetic Asian option, for a certain set of parameters, using Monte Carlo simulation. 
+                                        """),
+                                    dcc.Markdown(
+                                        """The objective is to show that the price of a derivate \(V_0\) can be found using Monte Carlo simulation""" 
+                                    ),
+                                    html.P(
+                                        """This app also shows the impact of certain models on simulation accuracy by reducing the variance, independently of the number of simulations. """    
+                                    ),
+                                    
+                                    html.Hr(),
+                                    html.H4('Type of options'),
+                                    html.P("""
+                                        Insérer payoff   
+                                        """),
+                                    
+                                    
                                 ])
                             ),
                             dcc.Tab(
