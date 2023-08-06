@@ -10,7 +10,7 @@
 
 #Import packages
 import numpy as np
-from scipy.stats import norm
+from scipy.stats import norm, gaussian_kde
 import matplotlib.pyplot as plot
 
 
@@ -29,7 +29,7 @@ def BS_geo(S0,K,T,vol,r,n,option_type):
     sigsqT = vol**2*T*(2*n+1)/(6*n+6)
     muT = 0.5*sigsqT + 0.5*(r - 0.5*(vol**2))*T
     d1=(np.log(S0/K) + (muT + 0.5*sigsqT))/(np.sqrt(sigsqT))
-    d2=d1 - np.sqrt(sigsqT)
+    d2=d1 - np.sqrt(sigsqT) 
     if option_type == "Call":
         price=np.exp(-r*T)*( S0*np.exp(muT)*norm.cdf(d1)-K*norm.cdf(d2))
     else: 
@@ -65,7 +65,7 @@ def MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed):
     ####### Monte Carlo Method
     #We generate a matrix N*M of r.v. following the Normal(0,1) and we generate all the stock paths
     Z = np.random.normal(size=(N, M)) 
-    delta_St1 = nudt + volsdt*Z
+    delta_St1 = nudt + volsdt*Z 
     ST1 = S0*np.cumprod( np.exp(delta_St1), axis=0)
     AT1 = np.cumsum(ST1, axis=0)/N #[N*M] average of S(t)
 
@@ -380,7 +380,7 @@ def Model_provider(S0,K,T,r,vol,N,M,Type,seed, ModelSel, ModelSel2):
             Price, SE, seed = MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed)
         case "MC with antithetic and european as CV":
             Price, SE, seed = MC_Sim_CV_EUR_ANTI(S0,K,T,r,vol,N,M,Type,seed)
-        case "MC with sum of european as CV":
+        case "MC with average of european as CV":
             Price, SE, seed = MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed)
         case "MC with geometric as CV":
             Price, SE, seed = MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed)
@@ -394,10 +394,16 @@ def Model_provider(S0,K,T,r,vol,N,M,Type,seed, ModelSel, ModelSel2):
             Price2, SE2, seed2 = MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed*2)
         case "MC with antithetic and european as CV":
             Price2, SE2, seed2 = MC_Sim_CV_EUR_ANTI(S0,K,T,r,vol,N,M,Type,seed*2)
-        case "MC with sum of european as CV":
+        case "MC with average of european as CV":
             Price2, SE2, seed2 = MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed*2)
         case "MC with geometric as CV":
             Price2, SE2, seed2 = MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed)
 
     return Price, Price2, SE, SE2, seed, seed2    
+
+def estimated_density(vector):
+    kde = gaussian_kde(vector)
+    x_grid = np.linspace(min(vector), max(vector), len(vector))
+    density_values = kde(x_grid)
+    return density_values
 

@@ -6,8 +6,8 @@
 
 ## APP-RELATED LIBRARIES
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
@@ -109,13 +109,15 @@ def graph_density(data):
 
     figure={
             'data': [
-                go.Histogram(x=PriceVec1, nbinsx=10, histnorm='probability', name='Histogram'),
-            
+                go.Histogram(x=PriceVec1, nbinsx=10, histnorm='probability'),
+                go.Scatter(x=np.linspace(min(PriceVec1), max(PriceVec1), len(PriceVec1)), y=estimated_density(PriceVec1)
+                           , mode='lines', name='Estimated Density',marker=dict(color='green'), yaxis='y2')
             ],
             'layout': go.Layout(
-                title=title,
+                title=title,    
                 xaxis={'title': 'Price'},
                 yaxis={'title': 'Density'},
+                yaxis2={'title': 'Estimated Density', 'overlaying': 'y', 'side': 'right'},
                 showlegend=False
             )
         }
@@ -133,12 +135,14 @@ def graph_density(data):
     figure={
             'data': [
                 go.Histogram(x=PriceVec2, nbinsx=10, histnorm='probability', name='Histogram',marker=dict(color='orange')),
-            
+                go.Scatter(x=np.linspace(min(PriceVec2), max(PriceVec2), len(PriceVec2)), y=estimated_density(PriceVec2)
+                           , mode='lines', name='Estimated Density',marker=dict(color='red'), yaxis='y2')
             ],
             'layout': go.Layout(
                 title=title,
                 xaxis={'title': 'Price'},
                 yaxis={'title': 'Density'},
+                yaxis2={'title': 'Estimated Density', 'overlaying': 'y', 'side': 'right'},  
                 showlegend=False
             )
         }
