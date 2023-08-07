@@ -157,7 +157,7 @@ def body():
                                     """]),
                                     dbc.Button("List of implemented models", id="model-list", color="primary", className="mr-1",),
                                                     dbc.Popover(children=[dbc.PopoverHeader("List of implemented models"),
-                                                    dbc.PopoverBody([html.Img(src="data:image/png;base64,{}".format(base64.b64encode(open("pictures\ListModels.png",'rb').read()).decode()), style={"width": "250%"})]),
+                                                    dbc.PopoverBody([html.Img(src="data:image/png;base64,{}".format(base64.b64encode(open("src\pictures\ListModels.png",'rb').read()).decode()), style={"width": "250%"})]),
                                                   ],
                                                     id="list",
                                                     is_open=False,
