@@ -1,3 +1,6 @@
+#Note: this code has been taken from Michel Vanderhulst's thesis code to ensure the consistency of the app if another student want
+#implement new features. Small changes have been done to adapt the code for the purpose of this thesis. 
+
 list_input = {"-": "-",
               "Spot price": "Current market price at which asset is bought or sold.",
 

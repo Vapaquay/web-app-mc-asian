@@ -247,7 +247,7 @@ def toggle_popover(n, is_open):
         return not is_open
     return is_open
 
-"""@app.callback(
+@app.callback(
     Output("list", "is_open"),
     [Input("model-list", "n_clicks")],
     [State("list", "is_open")],
@@ -255,7 +255,7 @@ def toggle_popover(n, is_open):
 def toggle_popover(n, is_open):
     if n:
         return not is_open
-    return is_open"""
+    return is_open
 
 ## MAIN FUNCTION
 if __name__ == '__main__':

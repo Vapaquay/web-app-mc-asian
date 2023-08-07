@@ -1,8 +1,14 @@
+#Note: this code has been taken from Michel Vanderhulst's thesis code to ensure the consistency of the app if another student want
+#implement new features. Small changes have been done to adapt the code for the purpose of this thesis. 
+
 # Dash app libraries
 from dash import dcc, Dash
 from dash import html
 import dash_bootstrap_components as dbc
 import base64
+import os
+
+List_path = os.path.join(os.path.dirname(__file__), 'pictures', 'ListModels.png')
 
 from inputDescr import list_input
 
@@ -155,13 +161,13 @@ def body():
                                     """
                                     We calculate the average of the estimated prices to find our price estimator. 
                                     """]),
-                                    #dbc.Button("List of implemented models", id="model-list", color="primary", className="mr-1",),
-                                                    #dbc.Popover(children=[dbc.PopoverHeader("List of implemented models"),
-                                                    #dbc.PopoverBody([html.Img(src="data:image/png;base64,{}".format(base64.b64encode(open("./pictures/ListModels.png",'rb').read()).decode()), style={"width": "250%"})]),
-                                                  #],
-                                                    #id="list",
-                                                    #is_open=False,
-                                                    #target="model-list",)
+                                    dbc.Button("List of implemented models", id="model-list", color="primary", className="mr-1",),
+                                                    dbc.Popover(children=[dbc.PopoverHeader("List of implemented models"),
+                                                    dbc.PopoverBody([html.Img(src="data:image/png;base64,{}".format(base64.b64encode(open(List_path,'rb').read()).decode()), style={"width": "250%"})]),
+                                                  ],
+                                                    id="list",
+                                                    is_open=False,
+                                                    target="model-list",)
                                 ]   
                                 )
                             ),
