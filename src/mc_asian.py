@@ -75,7 +75,6 @@ def MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed):
         Payoff = np.maximum(0, K - AT1[-1]) #reduction to [1*M]
     Price = np.exp(-r*T)*Payoff
     AvgPrice = np.mean(Price)
-    print(AvgPrice)
     SEavg = np.std(Price)/np.sqrt(M)
     #print("Call value is ${0} with SE +/- {1}".format(np.round(AvgPrice,3),np.round(SEavg,4)))
     return AvgPrice, SEavg, b #Return price, SE and stock paths  ST1[:,1]
@@ -356,10 +355,6 @@ def MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed):
     Cov = np.cov(AsianPrice, GeometricPrice)
     alpha = Cov[0,1]/Cov[1,1]
 
-    print("Asian ar: ", np.mean(AsianPrice))
-    print("Asian geo :", np.mean(GeometricPrice))
-    print("BSM: ", np.mean(GeoBSPrice))
-
     AsianPriceVec = (AsianPrice) - alpha*(GeometricPrice - GeoBSPrice)
     AvgPrice = np.mean(AsianPriceVec)
     SEavg = np.std(AsianPriceVec)/np.sqrt(M)
@@ -397,7 +392,7 @@ def Model_provider(S0,K,T,r,vol,N,M,Type,seed, ModelSel, ModelSel2):
         case "MC with average of european as CV":
             Price2, SE2, seed2 = MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed*2)
         case "MC with geometric as CV":
-            Price2, SE2, seed2 = MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed)
+            Price2, SE2, seed2 = MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed*2)
 
     return Price, Price2, SE, SE2, seed, seed2    
 

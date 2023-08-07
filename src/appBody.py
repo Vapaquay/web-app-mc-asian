@@ -34,12 +34,12 @@ def body():
                                     """
                                   The considered options are arithmetic Asian options paying \(\psi(A(S))\) at maturity \(T\) where \(\psi(X)\) is the payoff function
                                   and \(A(S)\) the arithmetic mean of the stock until maturity.
-                                  For a call, the payoff function is \(\psi(A(S))=max(0,A(S)-K)\) and for a put \(\psi(A(S))=max(0,K-A(S))\) where K is the strike price.
+                                  For a call, the payoff function is \(\psi(A(S))=max(0,A(S)-K)\) and for a put \(\psi(A(S))=max(0,K-A(S))\) where \(K\) is the strike price.
                                   """]),
                                     html.Hr(),
                                     html.P(
                                     """
-                                    Read more about options : 
+                                    Read more about Asian options : 
                                     https://en.wikipedia.org/wiki/Asian_option
                                     """
                                       ),
@@ -125,20 +125,20 @@ def body():
                                     html.Label("Step 2", style={'font-weight': 'bold'}),
                                     html.P([
                                     """
-                                    For each path, we calculate the average share price and the payoff \(\\psi(A(S)) = (A(S)-K)^+\).
+                                    For each path, we calculate the average share price and the payoff \(\\psi(A(S))\).
                                     """]),
 
                                     html.Label("Step 3", style={'font-weight': 'bold'}),
                                     html.P([
                                     """
-                                    If we use the antithetic method: we simulate a mirrored trajectory using the opposite sign for each \(Z\) and calculate the payoff \(\\psi(A^{AV}(S)) = (A^{AV}(S)-K)^+\) where 
+                                    If we use the antithetic method: we simulate a mirrored trajectory using the opposite sign for each \(Z\) and calculate the payoff \(\\psi(A^{AV}(S))\) where 
                                     \(A^{AV}(S)\)  is the average share price calculated using this mirror trajectory. It is important to note that even if the average is expressed 
                                     as a function of \(S\), we are working on the random variable \(Z\), as this method only works if the random variable is symmetrical in \(0\).
                                     We retain this notation for the sake of clarity.  
                                     """]),
                                     html.P([
                                     """
-                                    We combine the payoff of the normal trajectory and the payoff of the antithetic trajectory and divide each even number by 2 to get our estimator.
+                                    We combine the payoff of the normal trajectory and the payoff of the antithetic trajectory and we divide each pair by 2 to get our estimator.
                                     """]),
                                     html.P([
                                     """
@@ -154,7 +154,14 @@ def body():
                                     html.P([
                                     """
                                     We calculate the average of the estimated prices to find our price estimator. 
-                                    """])
+                                    """]),
+                                    dbc.Button("List of implemented models", id="model-list", color="primary", className="mr-1",),
+                                                    dbc.Popover(children=[dbc.PopoverHeader("List of implemented models"),
+                                                    dbc.PopoverBody([html.Img(src="data:image/png;base64,{}".format(base64.b64encode(open("pictures\ListModels.png",'rb').read()).decode()), style={"width": "250%"})]),
+                                                  ],
+                                                    id="list",
+                                                    is_open=False,
+                                                    target="model-list",)
                                 ]   
                                 )
                             ),
@@ -178,7 +185,7 @@ def body():
                                                             {'label':'MC with antithetic', 'value':"MC with antithetic"},
                                                             {'label':'MC with european as CV', 'value':"MC with european as CV"},
                                                             {'label':'MC with antithetic and european as CV', 'value':"MC with antithetic and european as CV"},
-                                                            {'label':'MC with sum of european as CV','value':"MC with sum of european as CV"},
+                                                            {'label':'MC with average of european as CV','value':"MC with average of european as CV"},
                                                             {'label':'MC with geometric as CV','value':"MC with geometric as CV"}],
                                                    value='Classical MC'),
                                     html.Div(children=[html.Label("Price", style={'font-weight': 'bold', 'display': 'inline-block'}),
@@ -197,7 +204,7 @@ def body():
                                                             {'label':'MC with antithetic', 'value':"MC with antithetic"},
                                                             {'label':'MC with european as CV', 'value':"MC with european as CV"},
                                                             {'label':'MC with antithetic and european as CV', 'value':"MC with antithetic and european as CV"},
-                                                            {'label':'MC with sum of european as CV','value':"MC with sum of european as CV"},
+                                                            {'label':'MC with average of european as CV','value':"MC with average of european as CV"},
                                                             {'label':'MC with geometric as CV','value':"MC with geometric as CV"}],
                                                    value='MC with geometric as CV'), 
                                     html.Div(children=[html.Label("Price", style={'font-weight': 'bold', 'display': 'inline-block'}),
@@ -264,8 +271,8 @@ def body():
                                               ]
                                     ),
                                     ####### Number of time the simulation is run
-                                    html.Div(children=[html.Label('Number of MC', title=list_input["Number of MC"], style={'font-weight': 'bold', "text-align":"left", "width":"25%",'display': 'inline-block'} ),
-                                               dcc.Input(id="MC", value=10, debounce=True, type='number', style={"width":"20%", 'display': 'inline-block'},min=1,max=101),
+                                    html.Div(children=[html.Label('Number of prices to plot', title=list_input["Number of MC"], style={'font-weight': 'bold', "text-align":"left", "width":"25%",'display': 'inline-block'} ),
+                                               dcc.Input(id="MC", value=50, debounce=True, type='number', style={"width":"20%", 'display': 'inline-block'},min=1,max=101),
                                                html.P("",id="message_MC", style={"font-size":12, "color":"red", "padding":5, 'width': '55%', "text-align":"left", 'display': 'inline-block'})
                                               ]
                                     ),

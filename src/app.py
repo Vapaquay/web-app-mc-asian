@@ -65,7 +65,6 @@ def get_simu(ModelSel,ModelSel2,CallOrPut,S,K,mu,vol,T,TS,M,MC,seed,n_clicks):
     Price,Price2,SE,SE2,seed,seed2 = Model_provider(S,K,T,mu,vol,TS,M,CallOrPut,seed, ModelSel, ModelSel2)
     PriceVec1 = []
     PriceVec2 = []
-    print("First MC done")
     
     #run the MC simulation multiple times to get a vector of estimated option prices
     for i in range (0,MC):    
@@ -116,7 +115,7 @@ def graph_density(data):
             'layout': go.Layout(
                 title=title,    
                 xaxis={'title': 'Price'},
-                yaxis={'title': 'Density'},
+                yaxis={'title': 'Distribution'},
                 yaxis2={'title': 'Estimated Density', 'overlaying': 'y', 'side': 'right'},
                 showlegend=False
             )
@@ -141,7 +140,7 @@ def graph_density(data):
             'layout': go.Layout(
                 title=title,
                 xaxis={'title': 'Price'},
-                yaxis={'title': 'Density'},
+                yaxis={'title': 'Distribution'},
                 yaxis2={'title': 'Estimated Density', 'overlaying': 'y', 'side': 'right'},  
                 showlegend=False
             )
@@ -242,6 +241,16 @@ def display_value_T(value):
     Output("popover", "is_open"),   
     [Input("popover-target", "n_clicks")],
     [State("popover", "is_open")],
+)
+def toggle_popover(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+@app.callback(
+    Output("list", "is_open"),
+    [Input("model-list", "n_clicks")],
+    [State("list", "is_open")],
 )
 def toggle_popover(n, is_open):
     if n:
