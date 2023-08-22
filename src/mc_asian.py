@@ -77,7 +77,10 @@ def MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed):
     AvgPrice = np.mean(Price)
     SEavg = np.std(Price)/np.sqrt(M)
     #print("Call value is ${0} with SE +/- {1}".format(np.round(AvgPrice,3),np.round(SEavg,4)))
-    return AvgPrice, SEavg, b #Return price, SE and stock paths  ST1[:,1]
+
+    alpha = 0 #adding alpha value equal to NA
+
+    return AvgPrice, SEavg, b, alpha #Return price, SE and stock paths  ST1[:,1]
 
 #### Monte Carlo simulation with antithetic variate ####
 def MC_SimAnti(S0,K,T,r,vol,N,M,Type,seed): 
@@ -122,7 +125,9 @@ def MC_SimAnti(S0,K,T,r,vol,N,M,Type,seed):
     AvgPrice = np.mean(Price)
     SE = np.std(Price)/np.sqrt(M)
     #print("Call value with antithetic variate is ${0} with SE +/- {1}".format(np.round(AvgPrice,3),np.round(SE,4)))
-    return AvgPrice, SE, b
+
+    alpha = 0
+    return AvgPrice, SE, b, alpha
 
 #### MC with european option as control variate ####
 def MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed): 
@@ -179,7 +184,7 @@ def MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed):
     SEavg = np.std(Price)/np.sqrt(M)
     AvgPrice = np.mean(Price)
     #print("Call value with control variate is ${0} with SE +/- {1}".format(np.round(np.mean(Price),3),np.round(SEavg,4)))
-    return AvgPrice, SEavg, b
+    return AvgPrice, SEavg, b, alpha
 
 #### MC with european option as control variate AND antithetic variate####
 def MC_Sim_CV_EUR_ANTI(S0,K,T,r,vol,N,M,Type,seed): 
@@ -237,7 +242,7 @@ def MC_Sim_CV_EUR_ANTI(S0,K,T,r,vol,N,M,Type,seed):
     SEavg = np.std(Price)/np.sqrt(M)
     AvgPrice = np.mean(Price)
     #print("Call value with control variate is ${0} with SE +/- {1}".format(np.round(np.mean(Price),3),np.round(SEavg,4)))
-    return AvgPrice, SEavg, b
+    return AvgPrice, SEavg, b, alpha
 
 #### MC with averaged sum of european option as control variate####
 def MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed):
@@ -301,7 +306,7 @@ def MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed):
     AvgPrice = np.mean(Price)
 
     #print("Price: {0}, SE: {1}".format(AvgPrice, SEavg))
-    return AvgPrice, SEavg, b
+    return AvgPrice, SEavg, b, alpha
 
 #### MC with geometric asian option as control variate####
 def MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed):
@@ -360,7 +365,7 @@ def MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed):
     SEavg = np.std(AsianPriceVec)/np.sqrt(M)
 
     #print("Price: {0}, SE: {1}".format(np.round(AvgPrice,4), np.round(SEavg,5)))
-    return AvgPrice, SEavg, b
+    return AvgPrice, SEavg, b, alpha
 
 #Because we need to get multiples times the MC simulation to get a vector of option prices, we need to call the definition multiples times
 #This function call the right function depending of the model selected 
@@ -368,33 +373,33 @@ def MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed):
 def Model_provider(S0,K,T,r,vol,N,M,Type,seed, ModelSel, ModelSel2):
     match ModelSel:
         case "Classical MC":
-            Price, SE, seed = MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed)
+            Price, SE, seed, alpha = MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed)
         case "MC with antithetic":
-            Price, SE, seed = MC_SimAnti(S0,K,T,r,vol,N,M,Type,seed)
+            Price, SE, seed, alpha = MC_SimAnti(S0,K,T,r,vol,N,M,Type,seed)
         case "MC with european as CV":
-            Price, SE, seed = MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed)
+            Price, SE, seed, alpha = MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed)
         case "MC with antithetic and european as CV":
-            Price, SE, seed = MC_Sim_CV_EUR_ANTI(S0,K,T,r,vol,N,M,Type,seed)
+            Price, SE, seed, alpha = MC_Sim_CV_EUR_ANTI(S0,K,T,r,vol,N,M,Type,seed)
         case "MC with average of european as CV":
-            Price, SE, seed = MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed)
+            Price, SE, seed, alpha = MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed)
         case "MC with geometric as CV":
-            Price, SE, seed = MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed)
+            Price, SE, seed, alpha = MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed)
 
     match ModelSel2:
         case "Classical MC":
-            Price2, SE2, seed2 = MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed*2) #seed is *2 to have another seed than the first model if the user use the same model
+            Price2, SE2, seed2, alpha2  = MC_AsianClass(S0,K,T,r,vol,N,M,Type,seed*2) #seed is *2 to have another seed than the first model if the user use the same model
         case "MC with antithetic":
-            Price2, SE2, seed2 = MC_SimAnti(S0,K,T,r,vol,N,M,Type,seed*2)
+            Price2, SE2, seed2, alpha2 = MC_SimAnti(S0,K,T,r,vol,N,M,Type,seed*2)
         case "MC with european as CV":
-            Price2, SE2, seed2 = MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed*2)
+            Price2, SE2, seed2, alpha2 = MC_Sim_CV_EUR(S0,K,T,r,vol,N,M,Type,seed*2)
         case "MC with antithetic and european as CV":
-            Price2, SE2, seed2 = MC_Sim_CV_EUR_ANTI(S0,K,T,r,vol,N,M,Type,seed*2)
+            Price2, SE2, seed2, alpha2 = MC_Sim_CV_EUR_ANTI(S0,K,T,r,vol,N,M,Type,seed*2)
         case "MC with average of european as CV":
-            Price2, SE2, seed2 = MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed*2)
+            Price2, SE2, seed2, alpha2 = MC_Sim_CV_EuroSum(S0,K,T,r,vol,N,M,Type,seed*2)
         case "MC with geometric as CV":
-            Price2, SE2, seed2 = MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed*2)
+            Price2, SE2, seed2, alpha2 = MC_Sim_CV_Geo(S0,K,T,r,vol,N,M,Type,seed*2)
 
-    return Price, Price2, SE, SE2, seed, seed2    
+    return Price, Price2, SE, SE2, seed, seed2, alpha, alpha2    
 
 def estimated_density(vector):
     kde = gaussian_kde(vector)

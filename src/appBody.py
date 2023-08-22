@@ -200,6 +200,9 @@ def body():
                                     html.Div(children=[html.Label("Standard error", style={'font-weight': 'bold', 'display': 'inline-block'}),
                                              html.Label(id="SEMod1", style={'display': 'inline-block'}),]
                                     ),
+                                    html.Div(children=[html.Label("Coefficient \(\\alpha\)", style={'font-weight': 'bold', 'display': 'inline-block'}),
+                                             html.Label(id="AlphaCoeff1", style={'display': 'inline-block'}),]
+                                    ),
                                     html.Div(children=[html.Label("Conf. interval 95%", style={'font-weight': 'bold', 'display': 'inline-block'}),
                                              html.Label(id="ConfIntMod1", style={'display': 'inline-block'}),]
                                     ),
@@ -218,6 +221,9 @@ def body():
                                     ),
                                     html.Div(children=[html.Label("Standard error", style={'font-weight': 'bold', 'display': 'inline-block'}),
                                              html.Label(id="SEMod2", style={'display': 'inline-block'}),]
+                                    ),
+                                    html.Div(children=[html.Label("Coefficient \(\\alpha\)", style={'font-weight': 'bold', 'display': 'inline-block'}),
+                                             html.Label(id="AlphaCoeff2", style={'display': 'inline-block'}),]
                                     ),
                                     html.Div(children=[html.Label("Conf. interval 95%", style={'font-weight': 'bold', 'display': 'inline-block'}),
                                              html.Label(id="ConfIntMod2", style={'display': 'inline-block'}),]

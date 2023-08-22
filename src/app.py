@@ -61,10 +61,12 @@ def get_simu(ModelSel,ModelSel2,CallOrPut,S,K,mu,vol,T,TS,M,MC,seed,n_clicks):
     else:
         seed = seed if type(seed)==int else 5
 
+    print("test")
     #first run of simulation to display price, SE and confidence interval
-    Price,Price2,SE,SE2,seed,seed2 = Model_provider(S,K,T,mu,vol,TS,M,CallOrPut,seed, ModelSel, ModelSel2)
+    Price,Price2,SE,SE2,seed,seed2, alpha, alpha2 = Model_provider(S,K,T,mu,vol,TS,M,CallOrPut,seed, ModelSel, ModelSel2)
     PriceVec1 = []
     PriceVec2 = []
+    print('test2')
     
     #run the MC simulation multiple times to get a vector of estimated option prices
     for i in range (0,MC):    
@@ -73,7 +75,7 @@ def get_simu(ModelSel,ModelSel2,CallOrPut,S,K,mu,vol,T,TS,M,MC,seed,n_clicks):
         PriceVec2.append(temp[1])
     print("Vector of prices done")
 
-    return (Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2), seed
+    return (Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2, alpha, alpha2), seed
 
 ## PLOT
 #Boxplot 
@@ -82,7 +84,7 @@ def get_simu(ModelSel,ModelSel2,CallOrPut,S,K,mu,vol,T,TS,M,MC,seed,n_clicks):
     [Input('memory-output', 'data'),]
 )
 def boxplot(data):
-    Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2 = data
+    Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2, alpha, alpha2 = data
     figure={
             'data': [
                 go.Box(y=PriceVec1, name=ModelSel),
@@ -103,7 +105,7 @@ def boxplot(data):
         [Input('memory-output', 'data'),]
 )
 def graph_density(data):
-    Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2 = data
+    Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2, alpha, alpha2 = data
     title = "Price distribution using {0}".format(ModelSel)
 
     figure={
@@ -128,7 +130,7 @@ def graph_density(data):
         [Input('memory-output', 'data'),]
 )
 def graph_density(data):
-    Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2 = data
+    Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2, alpha, alpha2 = data
     title = "Price distribution using {0}".format(ModelSel2)
 
     figure={
@@ -196,23 +198,29 @@ def check_input_MC(MC):
 ## DISPLAYING PRICE
 @app.callback(Output('PriceMod1', 'children'),
               Output('SEMod1', 'children'),
+              Output('AlphaCoeff1', 'children'),
               Output('ConfIntMod1', 'children'),
               [Input('memory-output', 'data'),])
 def display_price(data):
-    Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2 = data
+    Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2, alpha, alpha2 = data
     LowInt = np.round(Price - norm.ppf(0.975)*SE,3)
     HighInt = np.round(Price + norm.ppf(0.975)*SE,3)
-    return f': {np.round(Price,4)}', f': {np.round(SE,4)}', f': [{LowInt} ; {HighInt}]'
+    if alpha == 0:
+        alphatodis = "/"
+    else:
+        alphatodis = np.round(alpha,4)
+    return f': {np.round(Price,4)}', f': {np.round(SE,4)}', f': {alphatodis}' ,f': [{LowInt} ; {HighInt}]'
 
 @app.callback(Output('PriceMod2', 'children'),
               Output('SEMod2', 'children'),
+              Output('AlphaCoeff2', 'children'),
               Output('ConfIntMod2', 'children'),
               [Input('memory-output', 'data'),])
 def display_price(data):
-    Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2 = data
+    Price,Price2,SE,SE2,seed, PriceVec1,PriceVec2, ModelSel, ModelSel2, alpha, alpha2 = data
     LowInt = np.round(Price2 - norm.ppf(0.975)*SE2,3)
     HighInt = np.round(Price2 + norm.ppf(0.975)*SE2,3)
-    return f': {np.round(Price2,4)}', f': {np.round(SE2,4)}', f': [{LowInt} ; {HighInt}]'
+    return f': {np.round(Price2,4)}', f': {np.round(SE2,4)}', f': {np.round(alpha2,4)}', f': [{LowInt} ; {HighInt}]'
 
 
 ## INPUTS VISUALS
