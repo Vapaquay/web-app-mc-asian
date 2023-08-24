@@ -284,7 +284,7 @@ def body():
                                     ),
                                     ####### Number of time the simulation is run
                                     html.Div(children=[html.Label('Number of prices to plot', title=list_input["Number of MC"], style={'font-weight': 'bold', "text-align":"left", "width":"25%",'display': 'inline-block'} ),
-                                               dcc.Input(id="MC", value=50, debounce=True, type='number', style={"width":"20%", 'display': 'inline-block'},min=1,max=101),
+                                               dcc.Input(id="MC", value=20, debounce=True, type='number', style={"width":"20%", 'display': 'inline-block'},min=1,max=101),
                                                html.P("",id="message_MC", style={"font-size":12, "color":"red", "padding":5, 'width': '55%', "text-align":"left", 'display': 'inline-block'})
                                               ]
                                     ),
